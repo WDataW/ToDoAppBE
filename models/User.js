@@ -30,9 +30,7 @@ userSchema.pre('save', async function () {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
     }
-    if (this.isModified('verificationToken')) {
-        this.verificationToken = hashString(this.verificationToken)
-    }
+
 });
 const userModel = mongoose.model('User', userSchema);
 module.exports = userModel

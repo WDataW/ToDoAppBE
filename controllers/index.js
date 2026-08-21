@@ -1,2 +1,2 @@
-const { login, register } = require('./authControllers');
-module.exports = { login, register }
+const { login, register, verifyEmail } = require('./authControllers');
+module.exports = { login, register, verifyEmail }
