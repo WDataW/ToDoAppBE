@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const bcrypt = require('bcrypt');
-const { hashPassword } = require('@root/utils');
+const hashPassword = require('../utils/hashPassword');
+
 const userSchema = mongoose.Schema({
     fullname: {
         type: String,

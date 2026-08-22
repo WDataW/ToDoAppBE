@@ -1,7 +1,7 @@
 const JWT = require('jsonwebtoken');
 
-const signJWT = (payload) => {
-    return JWT.sign(payload, process.env.JWT_SECRET);
+const signJWT = (payload, { expiresIn }) => {
+    return JWT.sign(payload, process.env.JWT_SECRET, { expiresIn });
 }
 
 const verifyJWT = (token) => {
