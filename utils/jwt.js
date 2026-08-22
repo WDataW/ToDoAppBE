@@ -1,7 +1,7 @@
 const JWT = require('jsonwebtoken');
 
 const signJWT = (payload) => {
-    return JWT.sign({ payload }, process.env.JWT_SECRET);
+    return JWT.sign(payload, process.env.JWT_SECRET);
 }
 
 const verifyJWT = (token) => {
