@@ -1,10 +1,10 @@
 const emailVerification = ({ from, to, verificationUrl }) =>
 ({
-    from: from, // sender address
-    to: to, // list of recipients
-    subject: 'Verify your email address',
-    text: 'Welcome!',
-    html: `
+  from: from, // sender address
+  to: to, // list of recipients
+  subject: 'Verify your email address',
+  text: 'Welcome!',
+  html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: @root333;" >
       <h2>Verify your email address</h2>
 

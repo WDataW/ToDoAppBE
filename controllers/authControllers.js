@@ -1,7 +1,9 @@
 const { BadRequest } = require("@root/errors");
 const { User } = require('@root/models');
 const { StatusCodes } = require('http-status-codes');
-const { createTransporter, hashString, generateHex, emailVerification } = require("@root/utils");
+const { signJWT, attachCookie, minute, createTransporter, hashString, generateHex, emailVerification } = require("@root/utils");
+
+// controllers
 const login = async (req, res) => {
 }
 const register = async (req, res) => {
@@ -10,11 +12,31 @@ const register = async (req, res) => {
 
     const verificationToken = generateHex(32);
     const newUser = { fullname, email, password, verificationToken: hashString(verificationToken) };
-    const mongoUser = await User.create(newUser);
+    await User.create(newUser);
     await sendVerificationEmail(email, verificationToken);
     res.status(StatusCodes.CREATED).json(verificationToken)
 }
 
+const verifyEmail = async (req, res) => {
+    const { email, token } = req.query;
+    const user = await User.findOne({ email });
+    if (!user) throw new BadRequest('Invalid verification request');
+    if (user.isVerified) {
+        return res.status(StatusCodes.OK).json({ message: 'Email already verified' });
+    }
+    const verificationToken = hashString(token);
+    if (verificationToken !== user.verificationToken) throw new BadRequest('Invalid verification request');
+
+    user.isVerified = true;
+    user.verificationToken = "none";
+    await user.save();
+    const jwt = signJWT({ id: user._id, fullname: user.fullname });
+    attachCookie({ res, name: 'accessToken', value: jwt, expires: new Date(Date.now() + 15 * minute) });
+    return res.status(StatusCodes.OK).json({ message: 'Email verified successfully' });
+}
+
+
+// helper functions
 const sendVerificationEmail = async (to, verificationToken) => {
     const verificationUrl = `${process.env.APP_URL}/auth/verify-email?email=${to}&token=${verificationToken}`
     const transporter = createTransporter();
@@ -22,17 +44,4 @@ const sendVerificationEmail = async (to, verificationToken) => {
     transporter.sendMail(mail);
 }
 
-const verifyEmail = async (req, res) => {
-    const { email, token } = req.query;
-    const user = await User.findOne({ email });
-    if (!user) throw new BadRequest('Invalid verification request');
-
-    const verificationToken = hashString(token);
-    if (verificationToken !== user.verificationToken) throw new BadRequest('Invalid verification request');
-
-    user.isVerified = true;
-    user.verificationToken = "none";
-    await user.save();
-    res.status(StatusCodes.OK).send({})
-}
 module.exports = { login, register, verifyEmail }

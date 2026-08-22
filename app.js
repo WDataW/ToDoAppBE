@@ -9,7 +9,7 @@ const { authRouter } = require('./routes');
 
 // middleware
 app.use(express.json());
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIES_SECRET));
 app.use(express.urlencoded())
 app.use('/api/v1/auth', authRouter);
 app.use(notFound);
