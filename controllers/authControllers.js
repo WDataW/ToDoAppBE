@@ -1,10 +1,20 @@
-const { BadRequest } = require("@root/errors");
+const { BadRequest, Unauthorized } = require("@root/errors");
 const { User } = require('@root/models');
 const { StatusCodes } = require('http-status-codes');
 const { signJWT, attachCookie, minute, createTransporter, hashString, generateHex, emailVerification } = require("@root/utils");
-
+const bcrypt = require('bcrypt');
 // controllers
 const login = async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) throw new BadRequest('Invalid Credentials');
+    const user = await User.findOne({ email });
+    if (!user) throw new Unauthorized('Invalid Email or Password');
+
+    if (bcrypt.compare(password, user.password)) {
+        const jwt = signJWT({ id: user._id, fullname: user.fullname });
+        attachCookie({ res, name: 'accessToken', value: jwt, expires: new Date(Date.now() + 15 * minute) });
+        return res.status(StatusCodes.OK).json({ message: 'Logged in succesfully' });
+    } else throw new Unauthorized('Invalid Email or Password');
 }
 const register = async (req, res) => {
     const { fullname, email, password } = req.body;
@@ -13,6 +23,7 @@ const register = async (req, res) => {
     const verificationToken = generateHex(32);
     const newUser = { fullname, email, password, verificationToken: hashString(verificationToken) };
     await User.create(newUser);
+
     await sendVerificationEmail(email, verificationToken);
     res.status(StatusCodes.CREATED).json(verificationToken)
 }
