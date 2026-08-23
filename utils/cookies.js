@@ -31,6 +31,7 @@ const attachAuthCookies = async (req, res, user) => {
         existingRefreshToken.userAgent = userAgent;
         existingRefreshToken.sessionId = sessionId;
         existingRefreshToken.refreshToken = refreshToken;
+        existingRefreshToken.isRevoked = false;
         await existingRefreshToken.save();
     }
 }

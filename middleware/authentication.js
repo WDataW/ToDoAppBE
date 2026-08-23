@@ -42,6 +42,6 @@ const checkRefreshToken = async (req, res) => {
         storedToken.isRevoked = true;
         storedToken.save();
     }
-    return null;
+    return null;// failed to refresh access token
 }
 module.exports = authenticator;
