@@ -46,4 +46,10 @@ const attachAccessCookie = (res, user) => {
     attachCookie({ res, name: 'accessToken', value: accessToken, expires: new Date(Date.now() + 15 * minute) });
     return accessToken;
 }
-module.exports = { attachCookie, attachAccessCookie, attachAuthCookies, attachRefreshCookie }
+const removeAccessCookie = (res) => {
+    // remove access token
+    const accessToken = signJWT({}, { expiresIn: '0s' });
+    attachCookie({ res, name: 'accessToken', value: accessToken, expires: new Date(Date.now()) });
+    return accessToken;
+}
+module.exports = { attachCookie, attachAccessCookie, attachAuthCookies, attachRefreshCookie, removeAccessCookie }

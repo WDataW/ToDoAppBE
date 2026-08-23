@@ -16,7 +16,7 @@ const resetPasswordSchema = mongoose.Schema({
     },
     expiresAt: {
         type: Date,
-        default: () => new Date(Date.now() + 5000),
+        default: () => new Date(Date.now() + 15 * minute),
         required: true,
         validate: {
             validator: isFutureDate,

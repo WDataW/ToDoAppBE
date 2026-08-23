@@ -3,10 +3,11 @@ const { RP, User } = require('@root/models');
 const { StatusCodes } = require('http-status-codes');
 const { createTransporter, hashString, generateHex, emailVerification } = require("@root/utils");
 const bcrypt = require('bcrypt');
-const { attachAuthCookies } = require("../utils/cookies");
+const { attachAuthCookies, attachAccessCookie, removeAccessCookie } = require("../utils/cookies");
 const { passwordReset } = require("../utils/emails");
 const { isFutureDate } = require("../utils/date");
 const { minute } = require("../utils/time");
+const { RT } = require("../models");
 // controllers
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -20,7 +21,12 @@ const login = async (req, res) => {
         return res.status(StatusCodes.OK).json({ message: 'Logged in succesfully' });
     } else throw new Unauthorized('Invalid Email or Password');
 }
-
+const logout = async (req, res) => {
+    const { id } = req.user;
+    await RT.deleteOne({ id });
+    removeAccessCookie(res);
+    res.status(StatusCodes.OK).json({ message: 'Logged out successfully' });
+}
 const register = async (req, res) => {
     const { fullname, email, password } = req.body;
     if (!fullname || !email || !password) throw new BadRequest('Invalid Credentials');
@@ -100,4 +106,4 @@ const sendResetEmail = async (to, resetToken) => {
     await transporter.sendMail(mail);
 }
 
-module.exports = { login, register, verifyEmail, resetPassword, forgotPassword }
+module.exports = { login, logout, register, verifyEmail, resetPassword, forgotPassword }
