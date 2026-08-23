@@ -12,6 +12,7 @@ const authenticator = async (req, res, next) => {
         if (!payload) payload = await checkRefreshToken(req, res);
     }
     if (!payload) throw new Unauthorized('Please log in first');
+    console.log(payload);
     req.user = payload;
     next();
 }
