@@ -56,8 +56,6 @@ const verifyEmail = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
     const { id } = req.user;
-    const user = await User.findOne({ _id: id });
-    if (!user) throw new Unauthorized('Please login first');
 
     const resetToken = generateHex(32);
     const hashedResetToken = hashString(resetToken);
