@@ -55,18 +55,22 @@ const verifyEmail = async (req, res) => {
 }
 
 const forgotPassword = async (req, res) => {
-    const { id } = req.user;
+    const { email } = req.body;
+    if (!email) throw new BadRequest('Email must be provided');
+
+    const user = await User.findOne({ email });
+    if (!user) throw new BadRequest('Invalid credintials');
 
     const resetToken = generateHex(32);
     const hashedResetToken = hashString(resetToken);
-    const existingRPrequest = await RP.findOne({ userId: id });
+    const existingRPrequest = await RP.findOne({ userId: user._id });
     if (existingRPrequest) {// replace existing request
         existingRPrequest.resetToken = hashedResetToken;
         existingRPrequest.expiresAt = new Date(Date.now() + 15 * minute);
         existingRPrequest.isRevoked = false;
         await existingRPrequest.save();
     } else {// create a new request if there is no exisitng one
-        await RP.create({ userId: id, resetToken: hashedResetToken });
+        await RP.create({ userId: user._id, resetToken: hashedResetToken });
     }
     await sendResetEmail(user.email, resetToken);
     res.status(StatusCodes.OK).json({ message: 'Reset email sent' });

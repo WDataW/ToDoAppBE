@@ -11,11 +11,32 @@ const createTask = async (req, res) => {
     res.status(StatusCodes.OK).json(mongoTask);
 }
 const deleteTask = async (req, res) => {
-    const { taskId } = req.body;
+    const { taskId } = req.params;
     const { id: userId } = req.user;
-    const taskToDelete = await Task.findOneAndDelete({ _id: taskId, userId });
-    if (!taskToDelete) return res.status(StatusCodes.OK).json({ message: "Task already deleted" });
-    res.status(StatusCodes.OK).json(taskToDelete);
+    const deletedTask = await Task.findOneAndDelete({ _id: taskId, userId });
+    if (!deletedTask) return res.status(StatusCodes.OK).json({ message: "Task already deleted" });
+    res.status(StatusCodes.OK).json(deletedTask);
 }
 
-module.exports = { createTask, deleteTask }
+const editTask = async (req, res) => {
+    const { dueDate, title, description, priority, tags } = req.body;
+    const { taskId } = req.params;
+    const { id: userId } = req.user;
+    const updates = detectUpdates({ dueDate, title, description, priority, tags });
+    const editedTask = await Task.findOneAndUpdate({ _id: taskId, userId }, updates, { returnDocument: 'after' });
+    if (!editedTask) throw new BadRequest('Task is inexistent');
+    res.status(StatusCodes.OK).json(editedTask);
+}
+
+
+// helper functions
+const detectUpdates = ({ dueDate, title, description, priority, tags }) => {
+    const updates = {};
+    if (dueDate) updates.dueDate = dueDate;
+    if (title) updates.title = title;
+    if (description) updates.description = description;
+    if (priority) updates.priority = priority;
+    if (tags) updates.tags = tags;
+    return updates;
+}
+module.exports = { createTask, deleteTask, editTask }
