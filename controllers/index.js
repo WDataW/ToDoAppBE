@@ -1,4 +1,5 @@
-const { login, register, verifyEmail, forgotPassword, resetPassword, logout } = require('./authControllers');
+const { showMe, login, register, verifyEmail, forgotPassword, resetPassword, logout } = require('./authControllers');
 const { createTask, deleteTask, editTask, getAllTasks, getTask } = require('./taskControllers');
 const { getTag, getAllTags, editTag, deleteTag, createTag } = require('./tagControllers');
-module.exports = { getTag, getAllTags, editTag, deleteTag, createTag, createTask, deleteTask, getAllTasks, getTask, editTask, login, logout, register, verifyEmail, forgotPassword, resetPassword, }
+const { getAllSettings, initSettings, editSettings } = require('./settingsControllers');
+module.exports = { showMe, getAllSettings, initSettings, editSettings, getTag, getAllTags, editTag, deleteTag, createTag, createTask, deleteTask, getAllTasks, getTask, editTask, login, logout, register, verifyEmail, forgotPassword, resetPassword }

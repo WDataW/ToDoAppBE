@@ -5,7 +5,7 @@ const app = express();
 const connect = require('./db/connect');
 const cookieParser = require('cookie-parser');
 const { notFound, errorHandler } = require('./middleware');
-const { authRouter, tasksRouter, tagsRouter } = require('./routes');
+const { authRouter, tasksRouter, tagsRouter, settingsRouter } = require('./routes');
 
 // middleware
 app.use(express.json());
@@ -14,6 +14,7 @@ app.use(express.urlencoded())
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tasks', tasksRouter);
 app.use('/api/v1/tags', tagsRouter);
+app.use('/api/v1/settings', settingsRouter);
 app.use(notFound);
 app.use(errorHandler);
 

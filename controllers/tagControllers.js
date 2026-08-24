@@ -1,5 +1,6 @@
 const { Tag } = require('@root/models');
 const { StatusCodes } = require('http-status-codes');
+const checkUpdates = require('../utils/checkUpdates');
 const getTag = async (req, res) => {
     const { tagId: _id } = req.params;
     const { id: userId } = req.user;
@@ -24,11 +25,11 @@ const createTag = async (req, res) => {
     res.status(StatusCodes.OK).json(mongoTag);
 }
 const editTag = async (req, res) => {
-    const { title, color } = req.body;
+    const possibleUpdates = { title, color } = req.body;
     const { tagId } = req.params;
     const { id: userId } = req.user;
-    const updates = detectUpdates({ title, color });
-    const editedTag = await Tag.findOneAndUpdate({ _id: tagId, userId }, updates, { returnDocument: 'after' });
+    const updates = checkUpdates(possibleUpdates);
+    const editedTag = await Tag.findOneAndUpdate({ _id: tagId, userId }, updates, { returnDocument: 'after', runValidators: true, context: 'query' });
     if (!editedTag) throw new BadRequest('Tag is inexistent');
     res.status(StatusCodes.OK).json(editedTag);
 }
@@ -40,11 +41,5 @@ const deleteTag = async (req, res) => {
     res.status(StatusCodes.OK).json(deletedTag);
 }
 
-// helper functions
-const detectUpdates = ({ title, color }) => {
-    const updates = {};
-    if (title) updates.title = title;
-    if (color) updates.color = color;
-    return updates;
-}
+
 module.exports = { getTag, getAllTags, editTag, deleteTag, createTag }

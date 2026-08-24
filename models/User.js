@@ -24,6 +24,14 @@ const userSchema = mongoose.Schema({
     verificationToken: {
         type: String,
         required: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    isSuspended: {
+        type: Boolean,
+        default: false
     }
 });
 userSchema.pre('save', async function () {

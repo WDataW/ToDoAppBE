@@ -1,7 +1,8 @@
-const { BadRequest } = require('@root/errors');
+const { BadRequest, NotFound } = require('@root/errors');
 const { StatusCodes } = require('http-status-codes');
 const { Task } = require('@root/models');
-const { NotFound } = require('../errors');
+const checkUpdates = require('@root/utils/checkUpdates');
+
 const createTask = async (req, res) => {
     const { dueDate, title, description, priority, tags } = req.body;
     if (!dueDate || !title || !priority) throw new BadRequest('Please complete required fields');
@@ -20,11 +21,11 @@ const deleteTask = async (req, res) => {
 }
 
 const editTask = async (req, res) => {
-    const { dueDate, title, description, priority, tags } = req.body;
+    const possibleUpdates = { dueDate, title, description, priority, tags } = req.body;
     const { taskId } = req.params;
     const { id: userId } = req.user;
-    const updates = detectUpdates({ dueDate, title, description, priority, tags });
-    const editedTask = await Task.findOneAndUpdate({ _id: taskId, userId }, updates, { returnDocument: 'after' });
+    const updates = checkUpdates(possibleUpdates);
+    const editedTask = await Task.findOneAndUpdate({ _id: taskId, userId }, updates, { returnDocument: 'after', runValidators: true, context: 'query' });
     if (!editedTask) throw new BadRequest('Task is inexistent');
     res.status(StatusCodes.OK).json(editedTask);
 }
@@ -44,14 +45,5 @@ const getAllTasks = async (req, res) => {
     res.status(StatusCodes.OK).json(tasks);
 }
 
-// helper functions
-const detectUpdates = ({ dueDate, title, description, priority, tags }) => {
-    const updates = {};
-    if (dueDate) updates.dueDate = dueDate;
-    if (title) updates.title = title;
-    if (description) updates.description = description;
-    if (priority) updates.priority = priority;
-    if (tags) updates.tags = tags;
-    return updates;
-}
+
 module.exports = { createTask, deleteTask, editTask, getTask, getAllTasks }

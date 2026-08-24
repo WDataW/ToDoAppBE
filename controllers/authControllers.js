@@ -8,6 +8,7 @@ const { passwordReset } = require("../utils/emails");
 const { isFutureDate } = require("../utils/date");
 const { minute } = require("../utils/time");
 const { RT } = require("../models");
+const { initSettings } = require("./settingsControllers");
 // controllers
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -33,8 +34,8 @@ const register = async (req, res) => {
 
     const verificationToken = generateHex(32);
     const newUser = { fullname, email, password, verificationToken: hashString(verificationToken) };
-    await User.create(newUser);
-
+    const registeredUser = await User.create(newUser);
+    await initSettings(registeredUser._id)
     await sendVerificationEmail(email, verificationToken);
     res.status(StatusCodes.CREATED).json(verificationToken)
 }
@@ -94,6 +95,11 @@ const resetPassword = async (req, res) => {
     res.status(StatusCodes.OK).json({ message: 'password resetted' });
 }
 
+const showMe = async (req, res) => {
+    const { id: _id } = req.user;
+    const user = await User.findOne({ _id });
+    res.status(StatusCodes.OK).json(user)
+}
 // helper functions
 const sendVerificationEmail = async (to, verificationToken) => {
     const verificationUrl = `${process.env.APP_URL}/auth/verify-email?email=${to}&token=${verificationToken}`
@@ -108,4 +114,4 @@ const sendResetEmail = async (to, resetToken) => {
     await transporter.sendMail(mail);
 }
 
-module.exports = { login, logout, register, verifyEmail, resetPassword, forgotPassword }
+module.exports = { showMe, login, logout, register, verifyEmail, resetPassword, forgotPassword }
