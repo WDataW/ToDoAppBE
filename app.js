@@ -3,18 +3,24 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const connect = require('./db/connect');
+const fileUpload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const { notFound, errorHandler } = require('./middleware');
-const { authRouter, tasksRouter, tagsRouter, settingsRouter } = require('./routes');
+const { authRouter, tasksRouter, tagsRouter, accountRouter } = require('./routes');
 
 // middleware
+app.use(fileUpload({
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5 MB
+    },
+}));
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIES_SECRET));
 app.use(express.urlencoded())
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tasks', tasksRouter);
 app.use('/api/v1/tags', tagsRouter);
-app.use('/api/v1/settings', settingsRouter);
+app.use('/api/v1/account', accountRouter);
 app.use(notFound);
 app.use(errorHandler);
 

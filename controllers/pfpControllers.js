@@ -1,0 +1,35 @@
+const { createClient } = require('@supabase/supabase-js');
+const toPFP = require('../utils/toPFP');
+const { StatusCodes } = require('http-status-codes');
+
+const getPFP = async (req, res) => {
+    const { id: userId } = req.user;
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
+    const { data, error } = await supabase.storage.from('Avatars').createSignedUrl(`${userId}.webp`, 3600);
+    if (error) throw new Error(error.message);
+    if (data) res.status(StatusCodes.OK).json({ image: data.signedUrl });
+}
+
+
+const uploadPFP = async (req, res) => {
+    const { id: userId } = req.user;
+    const image = req.files.image;
+    const pfp = await toPFP(image);
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
+    const { _, error } = await supabase.storage.from('Avatars').upload(`${userId}.webp`, pfp, {
+        contentType: 'image/webp',
+        upsert: true
+    });
+    if (error) throw new Error(error.message);
+    res.status(StatusCodes.OK).json({ message: 'Image uploaded successfully' })
+}
+const removePFP = async (req, res) => {
+    const { id: userId } = req.user;
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
+    const { _, error } = await supabase.storage.from('Avatars').remove(`${userId}.webp`);
+    if (error) throw new Error(error.message);
+    res.status(StatusCodes.OK).json({ message: 'Image removed successfully' })
+}
+
+
+module.exports = { getPFP, uploadPFP, removePFP }
