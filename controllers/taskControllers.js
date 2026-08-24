@@ -1,6 +1,7 @@
 const { BadRequest } = require('@root/errors');
 const { StatusCodes } = require('http-status-codes');
 const { Task } = require('@root/models');
+const { NotFound } = require('../errors');
 const createTask = async (req, res) => {
     const { dueDate, title, description, priority, tags } = req.body;
     if (!dueDate || !title || !priority) throw new BadRequest('Please complete required fields');
@@ -28,6 +29,20 @@ const editTask = async (req, res) => {
     res.status(StatusCodes.OK).json(editedTask);
 }
 
+const getTask = async (req, res) => {
+    const { taskId: _id } = req.params;
+    const { id: userId } = req.user;
+    const task = await Task.findOne({ _id, userId });
+    if (!task) throw new NotFound('Task not found');
+
+    res.status(StatusCodes.OK).json(task);
+}
+const getAllTasks = async (req, res) => {
+    const { id: userId } = req.user;
+    const tasks = await Task.find({ userId });
+
+    res.status(StatusCodes.OK).json(tasks);
+}
 
 // helper functions
 const detectUpdates = ({ dueDate, title, description, priority, tags }) => {
@@ -39,4 +54,4 @@ const detectUpdates = ({ dueDate, title, description, priority, tags }) => {
     if (tags) updates.tags = tags;
     return updates;
 }
-module.exports = { createTask, deleteTask, editTask }
+module.exports = { createTask, deleteTask, editTask, getTask, getAllTasks }
