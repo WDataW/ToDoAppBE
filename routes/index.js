@@ -1,3 +1,4 @@
 const authRouter = require('./authRoute');
 const tasksRouter = require('./tasksRoute');
-module.exports = { tasksRouter, authRouter }
+const tagsRouter = require('./tagsRoute');
+module.exports = { tasksRouter, authRouter, tagsRouter }
