@@ -23,9 +23,9 @@ const attachAuthCookies = async (req, res, user) => {
     // if there is a stored refreshToken in DB then replace it
     const { ip } = req;
     const userAgent = req.get('User-Agent');
-    const existingRefreshToken = await RT.findOne({ userId: user._id });
+    const existingRefreshToken = await RT.findOne({ userId: user.id });
     if (!existingRefreshToken) {
-        await RT.create({ userId: user._id, sessionId, ip, userAgent, refreshToken });
+        await RT.create({ userId: user.id, sessionId, ip, userAgent, refreshToken });
     } else {
         existingRefreshToken.ip = ip;
         existingRefreshToken.userAgent = userAgent;
@@ -36,13 +36,13 @@ const attachAuthCookies = async (req, res, user) => {
     }
 }
 const attachRefreshCookie = (res, user, sessionId) => {
-    const refreshToken = signJWT({ id: user._id, sessionId, fullname: user.fullname }, { expiresIn: '30d' });
+    const refreshToken = signJWT({ id: user.id, sessionId, fullname: user.fullname }, { expiresIn: '30d' });
     attachCookie({ res, name: 'refreshToken', value: refreshToken, expires: new Date(Date.now() + 30 * day) });
     return refreshToken;
 }
 const attachAccessCookie = (res, user) => {
     // creating access token
-    const accessToken = signJWT({ id: user._id, fullname: user.fullname }, { expiresIn: '15m' });
+    const accessToken = signJWT({ id: user.id, fullname: user.fullname }, { expiresIn: '15m' });
     attachCookie({ res, name: 'accessToken', value: accessToken, expires: new Date(Date.now() + 15 * minute) });
     return accessToken;
 }

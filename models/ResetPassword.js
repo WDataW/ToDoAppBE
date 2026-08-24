@@ -4,7 +4,8 @@ const { isFutureDate } = require('../utils/date');
 const resetPasswordSchema = mongoose.Schema({
     userId: {
         type: String,
-        required: true
+        required: true,
+        immutable: true
     },
     resetToken: {
         type: String,

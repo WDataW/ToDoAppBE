@@ -3,7 +3,8 @@ const validator = require('validator');
 const refreshTokenSchema = mongoose.Schema({
     userId: {
         type: String,
-        required: true
+        required: true,
+        immutable: true
     },
     ip: {
         type: String,

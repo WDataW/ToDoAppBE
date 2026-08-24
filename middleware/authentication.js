@@ -7,7 +7,6 @@ const authenticator = async (req, res, next) => {
     let payload;
     if (!accessToken) {
         payload = await checkRefreshToken(req, res);
-
     } else {
         payload = verifyJWT(accessToken);
         if (!payload) payload = await checkRefreshToken(req, res);

@@ -1,3 +1,3 @@
 const isFutureDate = (date) => date > new Date();
-
-module.exports = { isFutureDate }
+const dateOfInvocation = () => new Date();
+module.exports = { isFutureDate, dateOfInvocation }

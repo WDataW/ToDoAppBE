@@ -1,4 +1,5 @@
 const User = require('./User');
 const RT = require('./RefreshToken');
 const RP = require('./ResetPassword');
-module.exports = { RT, User, RP }
+const Task = require('./Task');
+module.exports = { RT, User, RP, Task }

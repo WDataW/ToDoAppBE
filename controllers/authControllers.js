@@ -3,7 +3,7 @@ const { RP, User } = require('@root/models');
 const { StatusCodes } = require('http-status-codes');
 const { createTransporter, hashString, generateHex, emailVerification } = require("@root/utils");
 const bcrypt = require('bcrypt');
-const { attachAuthCookies, attachAccessCookie, removeAccessCookie } = require("../utils/cookies");
+const { attachAuthCookies, removeAccessCookie } = require("../utils/cookies");
 const { passwordReset } = require("../utils/emails");
 const { isFutureDate } = require("../utils/date");
 const { minute } = require("../utils/time");
@@ -17,7 +17,7 @@ const login = async (req, res) => {
     if (!user.isVerified) throw new Unauthorized('Please verify your Email address before logging in')
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
-        await attachAuthCookies(req, res, user);
+        await attachAuthCookies(req, res, { id: user._id, fullname: user.fullname });
         return res.status(StatusCodes.OK).json({ message: 'Logged in succesfully' });
     } else throw new Unauthorized('Invalid Email or Password');
 }
@@ -50,7 +50,7 @@ const verifyEmail = async (req, res) => {
     user.isVerified = true;
     user.verificationToken = "none";
     await user.save();
-    await attachAuthCookies(req, res, user);
+    await attachAuthCookies(req, res, { id: user._id, fullname: user.fullname });
     return res.status(StatusCodes.OK).json({ message: 'Email verified successfully' });
 }
 
