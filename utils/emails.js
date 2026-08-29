@@ -1,4 +1,4 @@
-const emailVerification = ({ from, to, verificationUrl }) => ({
+const emailVerification = ({ from, to, verificationCode }) => ({
   from,
   to,
   subject: 'Verify your email address',
@@ -6,11 +6,15 @@ const emailVerification = ({ from, to, verificationUrl }) => ({
   text: `
 Welcome!
 
-Please verify your email address by clicking the link below:
+Thanks for creating an account.
 
-${verificationUrl}
+Your verification code is:
 
-This link will expire soon. If you didn't create an account, you can safely ignore this email.
+${verificationCode}
+
+Enter this 6-digit code in the verification screen to verify your email address.
+
+This code will expire soon. If you didn't create an account, you can safely ignore this email.
 
 Thanks!
   `.trim(),
@@ -22,37 +26,38 @@ Thanks!
       <p>Welcome!</p>
 
       <p>
-        Please verify your email address by clicking the button below:
+        Thanks for creating an account. Please use the verification code below
+        to verify your email address:
       </p>
 
-      <p>
-        <a
-          href="${verificationUrl}"
+      <div
+        style="
+          margin: 24px 0;
+          padding: 16px;
+          background-color: #f3f4f6;
+          border-radius: 8px;
+          text-align: center;
+        "
+      >
+        <span
           style="
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2563eb;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 6px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            color: #111827;
           "
         >
-          Verify Email Address
-        </a>
+          ${verificationCode}
+        </span>
+      </div>
+
+      <p>
+        Enter this 6-digit code in the verification screen to verify your
+        email address.
       </p>
 
       <p>
-        Or copy and paste this link into your browser:
-      </p>
-
-      <p>
-        <a href="${verificationUrl}">
-          ${verificationUrl}
-        </a>
-      </p>
-
-      <p>
-        This link will expire soon. If you didn't create an account,
+        This code will expire soon. If you didn't create an account,
         you can safely ignore this email.
       </p>
 
@@ -60,6 +65,7 @@ Thanks!
     </div>
   `.trim(),
 });
+
 
 
 const passwordReset = ({ from, to, resetUrl }) => ({

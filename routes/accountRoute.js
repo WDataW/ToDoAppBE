@@ -3,7 +3,7 @@ const { getAllSettings, editSettings, uploadPFP, removePFP, getPFP } = require('
 
 const router = require('express').Router();
 router.get('/pfp', authenticator, getPFP)
-router.put('/pfp', authenticator, uploadPFP)
+router.post('/pfp', authenticator, uploadPFP)
 router.delete('/pfp', authenticator, removePFP)
 module.exports = router;
 

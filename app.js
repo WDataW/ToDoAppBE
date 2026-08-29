@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const connect = require('./db/connect');
 const fileUpload = require('express-fileupload');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { notFound, errorHandler } = require('./middleware');
 const { authRouter, tasksRouter, tagsRouter, accountRouter } = require('./routes');
@@ -14,6 +15,7 @@ app.use(fileUpload({
         fileSize: 5 * 1024 * 1024 // 5 MB
     },
 }));
+app.use(cors())
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIES_SECRET));
 app.use(express.urlencoded())
@@ -25,7 +27,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 
-const port = 3000 || process.env.PORT;
+const port = process.env.PORT || 3000;
 const start = async () => {
     try {
         await connect(process.env.MONGO_URI);
