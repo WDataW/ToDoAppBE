@@ -37,8 +37,8 @@ const attachRefreshCookie = (res, user, sessionId) => {
 }
 const attachAccessCookie = (res, user) => {
     // creating access token
-    const accessToken = signJWT({ id: user.id, fullname: user.fullname }, { expiresIn: '20s' });
-    attachCookie({ res, name: 'accessToken', value: accessToken, expires: new Date(Date.now() + 20000) });
+    const accessToken = signJWT({ id: user.id, fullname: user.fullname }, { expiresIn: '15m' });
+    attachCookie({ res, name: 'accessToken', value: accessToken, expires: new Date(Date.now() + 15 * minute) });
     return accessToken;
 }
 const removeAccessCookie = (res) => {

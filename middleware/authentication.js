@@ -6,7 +6,11 @@ const authenticator = async (req, res, next) => {
     const { accessToken } = req.signedCookies;
     let payload;
     if (accessToken) {
-        payload = verifyJWT(accessToken);
+        try {
+            payload = verifyJWT(accessToken);
+        } catch (error) {
+            console.log(error?.message);
+        }
     }
     if (!payload) {
         payload = await checkRefreshToken(req, res);
@@ -24,6 +28,8 @@ const checkRefreshToken = async (req, res) => {
 
     const userAgent = req.get('User-Agent');
     const storedToken = await RT.findOne({ userId: id, userAgent, sessionId, refreshToken });
+    console.log(userAgent, " \n\n", sessionId, "\n\n", refreshToken);
+    console.log(storedToken);
     if (!storedToken || storedToken.isRevoked) return;
 
     attachAccessCookie(res, { id, fullname });
