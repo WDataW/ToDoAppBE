@@ -6,7 +6,7 @@ const connect = require('./db/connect');
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const { notFound, errorHandler } = require('./middleware');
+const { authenticator, notFound, errorHandler } = require('./middleware');
 const { authRouter, tasksRouter, tagsRouter, accountRouter } = require('./routes');
 
 // middleware
@@ -22,7 +22,7 @@ app.use(express.urlencoded())
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tasks', tasksRouter);
 app.use('/api/v1/tags', tagsRouter);
-app.use('/api/v1/account', accountRouter);
+app.use('/api/v1/account', authenticator, accountRouter);
 app.use(notFound);
 app.use(errorHandler);
 

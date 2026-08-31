@@ -3,4 +3,5 @@ const { createTask, deleteTask, editTask, getAllTasks, getTask } = require('./ta
 const { initTags, getTag, getAllTags, editTag, deleteTag, createTag } = require('./tagControllers');
 const { getAllSettings, initSettings, editSettings } = require('./settingsControllers');
 const { removePFP, uploadPFP, getPFP } = require('./pfpControllers');
-module.exports = { resendVerificationEmail, initTags, getPFP, removePFP, uploadPFP, showMe, getAllSettings, initSettings, editSettings, getTag, getAllTags, editTag, deleteTag, createTag, createTask, deleteTask, getAllTasks, getTask, editTask, login, logout, register, verifyEmail, forgotPassword, resetPassword }
+const { updateFullname } = require('./userControllers');
+module.exports = { updateFullname, resendVerificationEmail, initTags, getPFP, removePFP, uploadPFP, showMe, getAllSettings, initSettings, editSettings, getTag, getAllTags, editTag, deleteTag, createTag, createTask, deleteTask, getAllTasks, getTask, editTask, login, logout, register, verifyEmail, forgotPassword, resetPassword }
