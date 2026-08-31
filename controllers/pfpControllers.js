@@ -6,7 +6,8 @@ const getPFP = async (req, res) => {
     const { id: userId } = req.user;
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
     const { data, _ } = await supabase.storage.from('Avatars').createSignedUrl(`${userId}.webp`, 3600);
-    res.status(StatusCodes.OK).json({ signedUrl: `${data?.signedUrl}&wv=${Date.now()}` ?? '' });
+    const url = data?.signedUrl ? `${data?.signedUrl}&wv=${Date.now()}` : '/images/defaultPFP.png'
+    res.status(StatusCodes.OK).json({ signedUrl: url });
 }
 
 
