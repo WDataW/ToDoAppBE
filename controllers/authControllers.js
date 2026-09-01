@@ -11,6 +11,7 @@ const { minute } = require("../utils/time");
 const { RT, VE } = require("../models");
 const { initSettings } = require("./settingsControllers");
 const { initTags } = require("./tagControllers");
+const { updateLogInStreak } = require("./UserControllers");
 // controllers
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -119,7 +120,9 @@ const resetPassword = async (req, res) => {
 
 const showMe = async (req, res) => {
     const { id: _id } = req.user;
-    const user = await User.findOne({ _id }).select('email fullname createdAt -_id');
+    const user = await User.findOne({ _id }).select('email fullname lastLogIn highestLogInStreak currentLogInStreak createdAt -_id');
+    if (!user) return;
+    await updateLogInStreak(user);
     res.status(StatusCodes.OK).json(user)
 }
 // helper functions

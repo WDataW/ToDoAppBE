@@ -1,8 +1,8 @@
 const { StatusCodes } = require("http-status-codes");
 const { User, Task, Settings, RT, RP, Tag, VE } = require("../models");
 const bcrypt = require("bcrypt");
-const { logout } = require("./authControllers");
 const { removeAccessCookie } = require("../utils/cookies");
+const { normalize, getToday, getYesterday } = require("../utils/date");
 
 const updateFullname = async (req, res) => {
     const { id: _id } = req.user;
@@ -30,4 +30,27 @@ const deleteAccount = async (req, res) => {
     }
     res.status(StatusCodes.OK).json("account deleted along with all its data")
 }
-module.exports = { updateFullname, deleteAccount }
+
+const updateLogInStreak = async (user) => {
+    const lastLogIn = normalize(new Date(user.lastLogIn));
+    const today = getToday();
+    const yesterday = getYesterday();
+    if (lastLogIn.getTime() === today.getTime()) return;
+    if (lastLogIn.getTime() === yesterday.getTime()) await incrementLogInStreak(user);
+    else await resetLogInStreak(user);
+}
+const resetLogInStreak = async (user) => {
+    user.lastLogIn = new Date();
+    user.currentLogInStreak = 1;
+    await user.save({ runValidators: false });
+    return user;
+
+}
+const incrementLogInStreak = async (user) => {
+    user.lastLogIn = new Date();
+    user.currentLogInStreak = ++user.currentLogInStreak;
+    if (user.currentLogInStreak > user.highestLogInStreak) user.highestLogInStreak = user.currentLogInStreak;
+    await user.save({ runValidators: false });
+    return user;
+}
+module.exports = { updateLogInStreak, updateFullname, deleteAccount }

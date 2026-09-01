@@ -37,7 +37,20 @@ const userSchema = mongoose.Schema({
     isSuspended: {
         type: Boolean,
         default: false
-    }
+    },
+    highestLogInStreak: {
+        type: Number,
+        default: 1
+    },
+    currentLogInStreak: {
+        type: Number,
+        default: 1
+    },
+    lastLogIn: {
+        type: Date,
+        default: dateOfInvocation,
+    },
+
 });
 userSchema.pre('save', async function () {
     if (this.isModified('password')) {
