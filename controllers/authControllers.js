@@ -11,7 +11,9 @@ const { minute } = require("../utils/time");
 const { RT, VE } = require("../models");
 const { initSettings } = require("./settingsControllers");
 const { initTags } = require("./tagControllers");
-const { updateLogInStreak } = require("./UserControllers");
+const { initInbox } = require("./inboxControllers");
+const { updateLogInStreak } = require("./userControllers");
+
 // controllers
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -42,6 +44,7 @@ const register = async (req, res) => {
     const registeredUser = await User.create(newUser);
     await initSettings(registeredUser._id);
     await initTags(registeredUser._id);
+    await initInbox(registeredUser._id);
 
     await VE.create({ email, verificationCode: hashString(String(verificationCode)) });
     await sendVerificationEmail(email, verificationCode);

@@ -1,4 +1,3 @@
-const getNow = () => new Date();
 const isFutureDate = (date) => date > new Date();
 const dateOfInvocation = () => new Date();
 
@@ -15,4 +14,4 @@ const getYesterday = () => {
     return yesterday;
 }
 const normalize = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
-module.exports = { normalize, getNow, getYesterday, getToday, isFutureDate, dateOfInvocation }
+module.exports = { normalize, getYesterday, getToday, isFutureDate, dateOfInvocation }

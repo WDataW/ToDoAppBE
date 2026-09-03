@@ -5,4 +5,6 @@ const Task = require('./Task');
 const Tag = require('./Tag');
 const VE = require('./VerifyEmail');
 const Settings = require('./Settings');
-module.exports = { VE, RT, User, Tag, RP, Task, Settings }
+const Message = require('./Message');
+const SystemMessage = require('./SystemMessage');
+module.exports = { SystemMessage, Message, VE, RT, User, Tag, RP, Task, Settings }
