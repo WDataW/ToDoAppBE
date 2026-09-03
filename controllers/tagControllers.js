@@ -48,7 +48,7 @@ const defaultTags = [{
     "color": "#878787",
     "builtIn": true,
     "pinned": true,
-    "home": false
+    "home": true
 },
 {
     "title": "active",
@@ -56,7 +56,7 @@ const defaultTags = [{
     "color": "#5a9afa",
     "builtIn": true,
     "pinned": true,
-    "home": false
+    "home": true
 },
 {
     "title": "today",
@@ -80,7 +80,7 @@ const defaultTags = [{
     "color": "#fca5a5",
     "builtIn": true,
     "pinned": false,
-    "home": false
+    "home": true
 },
 {
     "title": "High Priority",
